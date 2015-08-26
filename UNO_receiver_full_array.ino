@@ -15,7 +15,6 @@ uint8_t lLow,hLow,lHigh,hHigh,ub[4];
 void setup() {
   //Transmitter initialisieren
 Serial.begin(9600);
-Serial.println("Starte Empfang");
 man.setupReceive(RX_PIN, MAN_300);
 man.beginReceiveArray(BUFFER_SIZE,data);
 }
@@ -24,6 +23,17 @@ void loop() {
   //Daten empfangen:
   if(man.receiveComplete())
   {
+    if(Serial.available()>0){
+    char var=Serial.read();
+     switch(var){
+        case 't':
+        Serial.println(newTemp);
+        break;
+        case 'p':
+        Serial.println(newPres);
+        break;
+      } 
+  }
     //zwischenspeicher array um später aus 4 uint8_t eine flaot zu machen
     ub[0]=data[1];
     ub[1]=data[2];
@@ -39,10 +49,28 @@ void loop() {
     newPres=newHigh; //aus 16 bit 32 bit machen, kann man leider nicht auf einmal machen, ka warum
     newPres<<=16;
     newPres|=newLow;
-    Serial.println(newPres);
-    Serial.println(newTemp);
-    Serial.println("#############");
+    //Serial.println('p');
+    //Serial.println(newPres);
+    //Serial.println('t');
+    //Serial.println(newTemp);
+    
+    
     
     man.beginReceiveArray(BUFFER_SIZE,data);
   }
+
+}
+void serialEvent()
+{
+  if(Serial.available()>0){
+    char var=Serial.read();
+     switch(var){
+        case 't':
+        Serial.println(newTemp);
+        break;
+        case 'p':
+        Serial.println(newPres);
+        break;
+      } 
+}
 }

@@ -3,6 +3,9 @@ import time
 import sys
 import glob
 import platform
+import httplib,urllib
+temp =''
+temp1 =''
 def serial_ports():
     
     if sys.platform.startswith('win'):
@@ -25,11 +28,10 @@ def serial_ports():
             pass
     return result
 	
-
+	
 result = serial_ports()
 platform =platform.system()
 print platform
-
 
 
 if not result:
@@ -43,27 +45,35 @@ else:
 		var2='COM'+str(var)
 		print"Connecting to "+var2
 		ser= serial.Serial(var2,9600,timeout=1)
-		time.sleep(3)
+		time.sleep(2)
 		print"Connected"
 		print"Press Ctrl+C to close"
 		while 1:
-		
-			
 			ser.write("t")
-			t=ser.read(10);
-			time.sleep(0.5)
+			x=ser.read(10)
+			print x
+			time.sleep(1)
 			ser.write("p")
-			p=ser.read(10)
-			time.sleep(0.5)
-			print t
-			print p
-		
-		
-		
-		
-		
-		
-		
+			y=ser.read(10)
+			print y
+			time.sleep(1)
+			print "Posting..."
+			time.sleep(1)
+			params = urllib.urlencode ({'field1': x,'field2' : y, 'key':'YOURAPIKEY'})
+			headers = {"Content-typZZe": "appliction/x-www-form-urlencoded","Accept": "text/plain"}
+			conn=httplib.HTTPConnection("api.thingspeak.com:80")
+			try:
+				conn.request("POST", "/update", params, headers)
+				response = conn.getresponse()
+				print x,y
+				print response.status, response.reason
+				print"Updating channel complete!"
+				conn.close()
+					
+			except:
+				print "connection failed"
+					
+			time.sleep(5)
 	if platform.startswith('Lin'):
 		print"Are you on a Raspberry Pi B+?"
 		var=raw_input("y/n ")
@@ -87,7 +97,7 @@ else:
 		
 		
 		
-		
+	
 		
 		
 		

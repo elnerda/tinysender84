@@ -32,7 +32,7 @@
 #define mt 7
 #define BUFFER_SIZE 9
 float Temp;
-uint32_t Pres;
+uint32_t Pres,sleeptime=360;
 uint16_t pLow,pHigh,watchdog_counter=0;
 uint8_t lLow,hLow,lHigh,hHigh;
 uint8_t a[BUFFER_SIZE];
@@ -48,11 +48,11 @@ ISR(WDT_vect){
 
 void setup() {
   //Sensor und Transmitter initialisieren
-  tiny.begin();
-  man.setupTransmit(mt, MAN_300);
+tiny.begin();
+man.setupTransmit(mt, MAN_300);
   //sleep modes initialisieren
-  set_sleep_mode(SLEEP_MODE_PWR_DOWN);//nicht das beste zum stromsparen, aber ein anfang
-  sleep_enable();
+set_sleep_mode(SLEEP_MODE_PWR_DOWN);//nicht das beste zum stromsparen, aber ein anfang
+sleep_enable();
 
 }
 //Union um float in 8 byte zu teilen
@@ -68,7 +68,7 @@ sleep_mode();       // erstmal schlafen, nach 500ms aufwachen
 ADCSRA |= (1<<ADEN); //ADC wieder einschalten
                     // danach muss die erste messung verworfen werden
 
-  if(watchdog_counter >30){
+  if(watchdog_counter >sleeptime){
     //30 sekunden schlafen, danach timer wieder auf 0 stelllen um wieder 30 sekunden zu schlafen
     watchdog_counter=0;
   //Werte aus dem Sensor auslesen
@@ -76,7 +76,7 @@ ADCSRA |= (1<<ADEN); //ADC wieder einschalten
     Pres=tiny.readPressure();
 //Temperatur and Union für float to byte(4) übergeben
     u.fval=Temp;
-//Luftdruck in 4 Bit werte aufteilen
+//Luftdruck in 4 ( Bit werte aufteilen
     pLow=Pres;
     pHigh=Pres>>16;
     lLow=pLow;

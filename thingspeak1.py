@@ -4,8 +4,8 @@ import sys
 import glob
 import platform
 import httplib,urllib
-temp =''
-temp1 =''
+x=''
+y=''
 def serial_ports():
     
     if sys.platform.startswith('win'):
@@ -49,6 +49,8 @@ else:
 		print"Connected"
 		print"Press Ctrl+C to close"
 		while 1:
+			
+			print "Getting Data"
 			ser.write("t")
 			x=ser.read(10)
 			print x
@@ -59,7 +61,7 @@ else:
 			time.sleep(1)
 			print "Posting..."
 			time.sleep(1)
-			params = urllib.urlencode ({'field1': x,'field2' : y, 'key':'YOURAPIKEY'})
+			params = urllib.urlencode ({'field1': x,'field2' : y, 'key':'K877A6ECOC6ZDBW5'})
 			headers = {"Content-typZZe": "appliction/x-www-form-urlencoded","Accept": "text/plain"}
 			conn=httplib.HTTPConnection("api.thingspeak.com:80")
 			try:
@@ -73,7 +75,7 @@ else:
 			except:
 				print "connection failed"
 					
-			time.sleep(5)
+			time.sleep(30)
 	if platform.startswith('Lin'):
 		print"Are you on a Raspberry Pi B+?"
 		var=raw_input("y/n ")

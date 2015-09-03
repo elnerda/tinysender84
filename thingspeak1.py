@@ -6,6 +6,7 @@ import platform
 import httplib,urllib
 x=''
 y=''
+count = 1
 def serial_ports():
     
     if sys.platform.startswith('win'):
@@ -59,23 +60,31 @@ else:
 			y=ser.read(10)
 			print y
 			time.sleep(1)
-			print "Posting..."
+			
 			time.sleep(1)
-			params = urllib.urlencode ({'field1': x,'field2' : y, 'key':'K877A6ECOC6ZDBW5'})
-			headers = {"Content-typZZe": "appliction/x-www-form-urlencoded","Accept": "text/plain"}
-			conn=httplib.HTTPConnection("api.thingspeak.com:80")
-			try:
-				conn.request("POST", "/update", params, headers)
-				response = conn.getresponse()
-				print x,y
-				print response.status, response.reason
-				print"Updating channel complete!"
-				conn.close()
+			if count ==1:
+				count = count +1
+				print"First reading will be ignored"
+				time.sleep(160)
+				
+			else :
+				print "Posting..."
+				params = urllib.urlencode ({'field1': x,'field2' : y, 'key':'K877A6ECOC6ZDBW5'})
+				headers = {"Content-typZZe": "appliction/x-www-form-urlencoded","Accept": "text/plain"}
+				conn=httplib.HTTPConnection("api.thingspeak.com:80")
+				try:
+					conn.request("POST", "/update", params, headers)
+					response = conn.getresponse()
+					print x,y
+					print response.status, response.reason
+					print"Updating channel complete!"
+					print time.ctime()
+					conn.close()
 					
-			except:
-				print "connection failed"
+				except:
+					print "connection failed"
 					
-			time.sleep(30)
+			time.sleep(200)
 	if platform.startswith('Lin'):
 		print"Are you on a Raspberry Pi B+?"
 		var=raw_input("y/n ")
@@ -83,9 +92,45 @@ else:
 			a=serial_ports()
 			print"Automatically connecting to Hardware Serialport "+a[1]
 			ser = serial.Serial(a[1],9600,timeout=1)
-			time.sleep(3)
+			time.sleep(2)
 			print"Connected"
 			print"Press Ctrl+C to close"
+			while 1:
+			
+				print "Getting Data"
+				ser.write("t")
+				x=ser.read(10)
+				print x
+				time.sleep(1)
+				ser.write("p")
+				y=ser.read(10)
+				print y
+				time.sleep(1)
+			
+				time.sleep(1)
+				if count ==1:
+					count = count +1
+					print"First reading will be ignored"
+					time.sleep(160)
+				
+				else :
+					print "Posting..."
+					params = urllib.urlencode ({'field1': x,'field2' : y, 'key':'K877A6ECOC6ZDBW5'})
+					headers = {"Content-typZZe": "appliction/x-www-form-urlencoded","Accept": "text/plain"}
+					conn=httplib.HTTPConnection("api.thingspeak.com:80")
+					try:
+						conn.request("POST", "/update", params, headers)
+						response = conn.getresponse()
+						print x,y
+						print response.status, response.reason
+						print"Updating channel complete!"
+						print time.ctime()
+						conn.close()
+					
+					except:
+						print "connection failed"
+					
+				time.sleep(200)
 		else:
 			print"Available Serialports"
 			print result

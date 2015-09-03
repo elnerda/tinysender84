@@ -23,17 +23,7 @@ void loop() {
   //Daten empfangen:
   if(man.receiveComplete())
   {
-    if(Serial.available()>0){
-    char var=Serial.read();
-     switch(var){
-        case 't':
-        Serial.println(newTemp);
-        break;
-        case 'p':
-        Serial.println(newPres);
-        break;
-      } 
-  }
+   
     //zwischenspeicher array um später aus 4 uint8_t eine flaot zu machen
     ub[0]=data[1];
     ub[1]=data[2];
